@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fangjia.sharding.repository.UserRepository">
+    
+    <resultMap id="baseResultMap" type="com.fangjia.sharding.po.User">
+        <!--<result column="id" property="id" jdbcType="INTEGER" />-->
+        <id column="id" property="id" jdbcType="INTEGER"></id>
+        <result column="city" property="city" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <insert id="addUser">
+        INSERT INTO user (
+          id, city, name
+        )
+        VALUES (
+        #{id,jdbcType=INTEGER},
+        #{city,jdbcType=VARCHAR},
+        #{name,jdbcType=VARCHAR}
+        )
+    </insert>
+   
+    <select id="list" resultMap="baseResultMap">
+        SELECT u.* FROM user u
+    </select>
+
+    <select id="order" resultMap="baseResultMap">
+        SELECT u.* FROM user u WHERE u.id &lt; #{u.id} ORDER BY u.id desc
+    </select>
+
+    <select id="orderAll" resultMap="baseResultMap">
+        SELECT u.* FROM user u WHERE u.id &gt;= 0 ORDER BY u.id desc
+    </select>
+
+    <select id="group" resultMap="baseResultMap">
+        SELECT u.* FROM user u WHERE u.id &lt; #{u.id} GROUP BY u.type
+    </select>
+
+    <select id="groupAll" resultMap="baseResultMap">
+        SELECT u.* FROM user u WHERE u.id &gt;= 0 GROUP BY u.type
+    </select>
+
+    <select id="groupOrder" resultMap="baseResultMap">
+        SELECT u.* FROM user u WHERE u.id &lt; #{u.id} GROUP BY u.type ORDER BY u.id DESC
+    </select>
+
+    <select id="groupOrderAll" resultMap="baseResultMap">
+        SELECT u.* FROM user u WHERE u.id &gt;= 0 GROUP BY u.type ORDER BY u.id DESC
+    </select>
+
+	<select id="findById" resultMap="baseResultMap">
+        SELECT u.* FROM user u WHERE u.id=#{id,jdbcType=INTEGER}
+    </select>
+    
+    <select id="findByName" resultMap="baseResultMap">
+        SELECT u.* FROM user u WHERE u.name=#{name,jdbcType=VARCHAR}
+    </select>
+    
+    <update id="update" parameterType="com.fangjia.sharding.po.User">
+        UPDATE user
+        <set>
+            <if test="city != null and city != ''">
+                city = #{city,jdbcType=VARCHAR}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    
+</mapper>
